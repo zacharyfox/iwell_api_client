@@ -63,6 +63,20 @@ class IWell():
       error = resp.json()['error']['message']
       raise Exception(error)
 
+  def _patch(self, path, data, params={}):
+    url = f'{self.url}/{path}'
+    logger.debug(f'Posting {data} to {url} with parameters: {params}')
+    headers = {
+        'Authorization': f'Bearer {self.auth_token}'
+    }
+    resp = self.session.patch(url, json=data, headers=headers, params=params)
+    if resp.status_code == 200:
+      logger.debug(f'Response: {resp.json()}')
+      return resp.json()
+    else:
+      error = resp.json()['error']['message']
+      raise Exception(error)
+
   def list_wells(self, since=None):
     path = 'v1/wells'
     if since:
@@ -92,3 +106,15 @@ class IWell():
   def create_well_field_value(self, well_id, field_id, data):
     path = f'v1/wells/{well_id}/fields/{field_id}/values'
     return self._post(path, data)
+  
+  def list_well_production(self, well_id, start=None, end=None, since=None):
+    path = f'v1/wells/{well_id}/production'
+    params = {}
+    for param in ['start', 'end', 'since']:
+      if param in locals() and locals()[param]:
+        params[param] = locals()[param]
+    return self._get(path, params)
+
+  def update_well_production(self, well_id, production_id, data):
+    path = f'v1/wells/{well_id}/production/{production_id}'
+    return self._patch(path, data)
