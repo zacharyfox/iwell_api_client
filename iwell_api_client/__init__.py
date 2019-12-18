@@ -18,9 +18,9 @@ class IWell():
     self.client_secret = client_secret
     self.username = username
     self.password = password
-    self.auth_token = self._get_auth_token()
+    self.auth_token = self.__get_auth_token()
 
-  def _get_auth_token(self):
+  def __get_auth_token(self):
     logger.debug('Getting iWell oAuth token')
     params = {
         'grant_type': 'password',
@@ -66,7 +66,7 @@ class IWell():
 
   def _patch(self, path, data, params={}):
     url = f'{self.url}/{path}'
-    logger.debug(f'Posting {data} to {url} with parameters: {params}')
+    logger.debug(f'Patching {data} to {url} with parameters: {params}')
     headers = {
         'Authorization': f'Bearer {self.auth_token}'
     }
@@ -123,3 +123,15 @@ class IWell():
   def create_tank_reading(self, tank_id, data):
     path = f'v1/tanks/{tank_id}/readings'
     return self._post(path, data)
+  
+  def list_tank_readings(self, tank_id, start=None, end=None, since=None):
+    path = f'v1/tanks/{tank_id}/readings'
+    params = {}
+    for param in ['start', 'end', 'since']:
+      if param in locals() and locals()[param]:
+        params[param] = locals()[param]
+    return self._get(path, params)
+  
+  def update_tank_reading(self, tank_id, reading_id, data):
+    path = f'v1/tanks/{tank_id}/readings/{reading_id}'
+    return self._patch(path, data)
