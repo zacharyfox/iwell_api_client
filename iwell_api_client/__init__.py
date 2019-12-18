@@ -8,6 +8,7 @@ import requests
 logger = logging.getLogger()
 logger.setLevel(os.getenv('LOG_LEVEL', logging.INFO))
 
+
 class IWell():
 
   def __init__(self, client_id, client_secret, username, password, url='https://api.iwell.info'):
@@ -106,7 +107,7 @@ class IWell():
   def create_well_field_value(self, well_id, field_id, data):
     path = f'v1/wells/{well_id}/fields/{field_id}/values'
     return self._post(path, data)
-  
+
   def list_well_production(self, well_id, start=None, end=None, since=None):
     path = f'v1/wells/{well_id}/production'
     params = {}
@@ -118,3 +119,7 @@ class IWell():
   def update_well_production(self, well_id, production_id, data):
     path = f'v1/wells/{well_id}/production/{production_id}'
     return self._patch(path, data)
+
+  def create_tank_reading(self, tank_id, data):
+    path = f'v1/tanks/{tank_id}/readings'
+    return self._post(path, data)
