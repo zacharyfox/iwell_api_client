@@ -135,3 +135,10 @@ class IWell():
   def update_tank_reading(self, tank_id, reading_id, data):
     path = f'v1/tanks/{tank_id}/readings/{reading_id}'
     return self._patch(path, data)
+
+  def list_run_tickets(self, tank_id, reading_id, since=None):
+    path = f'/v1/tanks/{tank_id}/readings/{reading_id}/run-tickets'
+    params = {}
+    if since:
+      params['since'] = since
+    return self._get(path, params)
